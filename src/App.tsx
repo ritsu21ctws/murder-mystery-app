@@ -1,14 +1,9 @@
-// import { Button } from "@/components/ui/button";
-import { Button, HStack } from "@chakra-ui/react";
+import { Router } from '@/router/Router';
 
 function App() {
   return (
     <>
-      <div data-testid="title">タイトル</div>
-      <HStack>
-        <Button>Click me</Button>
-        <Button>Click me</Button>
-      </HStack>
+      <Router />
     </>
   );
 }
