@@ -1,9 +1,27 @@
 import React, { memo } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { Card, Center, Input, Stack, Tabs } from '@chakra-ui/react';
 import { Field } from '@/components/ui/field';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
+import { RegisterFormData } from '@/domains/RegisterFormData';
 
 export const Register: React.FC = memo(() => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    defaultValues: {
+      user_id: '',
+      user_name: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = handleSubmit((data: RegisterFormData) => {
+    console.log(data);
+  });
+
   return (
     <Center mt="10">
       <Stack gap="6">
@@ -19,18 +37,46 @@ export const Register: React.FC = memo(() => {
                 </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="register">
-                <Stack gap="4" width="full">
-                  <Field>
-                    <Input placeholder="user id" />
-                  </Field>
-                  <Field>
-                    <Input placeholder="user name" />
-                  </Field>
-                  <Field>
-                    <Input type="password" placeholder="password" />
-                  </Field>
-                  <PrimaryButton width="full">登録</PrimaryButton>
-                </Stack>
+                <form onSubmit={onSubmit}>
+                  <Stack gap="4" width="full">
+                    <Field invalid={!!errors.user_id} errorText={errors.user_id?.message}>
+                      <Controller
+                        name="user_id"
+                        control={control}
+                        rules={{
+                          required: 'ユーザーIDの入力は必須です',
+                          pattern: { value: /^[a-zA-Z]+$/, message: 'ユーザーIDは半角英字で入力してください' },
+                        }}
+                        render={({ field }) => <Input {...field} placeholder="user id" />}
+                      />
+                    </Field>
+                    <Field invalid={!!errors.user_name} errorText={errors.user_name?.message}>
+                      <Controller
+                        name="user_name"
+                        control={control}
+                        rules={{
+                          required: 'ユーザー名の入力は必須です',
+                        }}
+                        render={({ field }) => <Input {...field} placeholder="user name" />}
+                      />
+                    </Field>
+                    <Field invalid={!!errors.password} errorText={errors.password?.message}>
+                      <Controller
+                        name="password"
+                        control={control}
+                        rules={{
+                          required: 'パスワードの入力は必須です',
+                          minLength: { value: 8, message: 'パスワードは8文字以上で入力してください' },
+                          pattern: { value: /^[a-zA-Z0-9!-/:-@[-`{-~]*$/, message: 'パスワードは半角英数字または記号で入力してください' },
+                        }}
+                        render={({ field }) => <Input {...field} type="password" placeholder="password" />}
+                      />
+                    </Field>
+                    <PrimaryButton type="submit" width="full">
+                      登録
+                    </PrimaryButton>
+                  </Stack>
+                </form>
               </Tabs.Content>
               <Tabs.Content value="login">
                 <Stack gap="4" width="full">
