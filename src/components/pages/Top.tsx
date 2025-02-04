@@ -121,18 +121,16 @@ export const Top: React.FC = memo(() => {
               <Tabs.Content value="login">
                 <form onSubmit={onSubmitLogin}>
                   <Stack gap="4" width="full">
-                    <Field>
-                      <Field invalid={!!errorsLogin.user_id} errorText={errorsLogin.user_id?.message}>
-                        <Controller
-                          name="user_id"
-                          control={controlLogin}
-                          rules={{
-                            required: 'ユーザーIDの入力は必須です',
-                            pattern: { value: /^[a-zA-Z]+$/, message: 'ユーザーIDは半角英字で入力してください' },
-                          }}
-                          render={({ field }) => <Input {...field} placeholder="user id" />}
-                        />
-                      </Field>
+                    <Field invalid={!!errorsLogin.user_id} errorText={errorsLogin.user_id?.message}>
+                      <Controller
+                        name="user_id"
+                        control={controlLogin}
+                        rules={{
+                          required: 'ユーザーIDの入力は必須です',
+                          pattern: { value: /^[a-zA-Z]+$/, message: 'ユーザーIDは半角英字で入力してください' },
+                        }}
+                        render={({ field }) => <Input {...field} placeholder="user id" />}
+                      />
                     </Field>
                     <Field invalid={!!errorsLogin.password} errorText={errorsLogin.password?.message}>
                       <Controller
