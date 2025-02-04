@@ -9,7 +9,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { createAccount } from '@/utils/supabaseFunctions';
 import { hashPassword } from '@/utils/auth';
 
-export const Register: React.FC = memo(() => {
+export const Top: React.FC = memo(() => {
   const navigate = useNavigate();
   const { showMessage } = useMessage();
 
