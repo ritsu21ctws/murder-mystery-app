@@ -67,14 +67,12 @@ export const Top: React.FC = memo(() => {
       <Stack gap="6">
         <Card.Root variant="elevated" minW="340px">
           <Card.Body>
-            <Tabs.Root defaultValue="register" mt="-3">
+            <Tabs.Root defaultValue="register" mt="-3" fitted>
               <Tabs.List>
-                <Tabs.Trigger value="register" width="full" justifyContent="center" _before={{ backgroundColor: 'primary' }}>
+                <Tabs.Trigger value="register" _before={{ backgroundColor: 'primary' }}>
                   会員登録
                 </Tabs.Trigger>
-                <Tabs.Trigger value="login" width="full" justifyContent="center">
-                  ログイン
-                </Tabs.Trigger>
+                <Tabs.Trigger value="login">ログイン</Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="register">
                 <form onSubmit={onSubmitRegister}>
