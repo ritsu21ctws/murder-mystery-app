@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Card, Center, Input, Stack, Tabs } from '@chakra-ui/react';
 import { Field } from '@/components/ui/field';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
+import { LoginFormData } from '@/domains/loginFormData';
 import { RegisterFormData } from '@/domains/registerFormData';
 import { useMessage } from '@/hooks/useMessage';
 import { createAccount } from '@/utils/supabaseFunctions';
@@ -25,7 +26,18 @@ export const Top: React.FC = memo(() => {
     },
   });
 
-  const onSubmit = handleSubmitRegister(async (data: RegisterFormData) => {
+  const {
+    control: controlLogin,
+    handleSubmit: handleSubmitLogin,
+    formState: { errors: errorsLogin },
+  } = useForm<LoginFormData>({
+    defaultValues: {
+      user_id: '',
+      password: '',
+    },
+  });
+
+  const onSubmitRegister = handleSubmitRegister(async (data: RegisterFormData) => {
     data.password = await hashPassword(data.password);
 
     try {
@@ -35,6 +47,10 @@ export const Top: React.FC = memo(() => {
     } catch {
       showMessage({ title: 'アカウントの登録に失敗しました', type: 'error' });
     }
+  });
+
+  const onSubmitLogin = handleSubmitLogin(async (data: LoginFormData) => {
+    console.log(data);
   });
 
   return (
@@ -52,7 +68,7 @@ export const Top: React.FC = memo(() => {
                 </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="register">
-                <form onSubmit={onSubmit}>
+                <form onSubmit={onSubmitRegister}>
                   <Stack gap="4" width="full">
                     <Field invalid={!!errorsRegister.user_id} errorText={errorsRegister.user_id?.message}>
                       <Controller
@@ -94,15 +110,36 @@ export const Top: React.FC = memo(() => {
                 </form>
               </Tabs.Content>
               <Tabs.Content value="login">
-                <Stack gap="4" width="full">
-                  <Field>
-                    <Input placeholder="user id" />
-                  </Field>
-                  <Field>
-                    <Input type="password" placeholder="password" />
-                  </Field>
-                  <PrimaryButton width="full">ログイン</PrimaryButton>
-                </Stack>
+                <form onSubmit={onSubmitLogin}>
+                  <Stack gap="4" width="full">
+                    <Field>
+                      <Field invalid={!!errorsLogin.user_id} errorText={errorsLogin.user_id?.message}>
+                        <Controller
+                          name="user_id"
+                          control={controlLogin}
+                          rules={{
+                            required: 'ユーザーIDの入力は必須です',
+                            pattern: { value: /^[a-zA-Z]+$/, message: 'ユーザーIDは半角英字で入力してください' },
+                          }}
+                          render={({ field }) => <Input {...field} placeholder="user id" />}
+                        />
+                      </Field>
+                    </Field>
+                    <Field invalid={!!errorsLogin.password} errorText={errorsLogin.password?.message}>
+                      <Controller
+                        name="password"
+                        control={controlLogin}
+                        rules={{
+                          required: 'パスワードの入力は必須です',
+                          minLength: { value: 8, message: 'パスワードは8文字以上で入力してください' },
+                          pattern: { value: /^[a-zA-Z0-9!-/:-@[-`{-~]*$/, message: 'パスワードは半角英数字または記号で入力してください' },
+                        }}
+                        render={({ field }) => <Input {...field} type="password" placeholder="password" />}
+                      />
+                    </Field>
+                    <PrimaryButton width="full">ログイン</PrimaryButton>
+                  </Stack>
+                </form>
               </Tabs.Content>
             </Tabs.Root>
           </Card.Body>
