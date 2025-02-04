@@ -1,11 +1,18 @@
 import React, { memo } from 'react';
+import { useNavigate } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import { Card, Center, Input, Stack, Tabs } from '@chakra-ui/react';
 import { Field } from '@/components/ui/field';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
-import { RegisterFormData } from '@/domains/RegisterFormData';
+import { RegisterFormData } from '@/domains/registerFormData';
+import { useMessage } from '@/hooks/useMessage';
+import { createAccount } from '@/utils/supabaseFunctions';
+import { hashPassword } from '@/utils/auth';
 
 export const Register: React.FC = memo(() => {
+  const navigate = useNavigate();
+  const { showMessage } = useMessage();
+
   const {
     control,
     handleSubmit,
@@ -18,8 +25,16 @@ export const Register: React.FC = memo(() => {
     },
   });
 
-  const onSubmit = handleSubmit((data: RegisterFormData) => {
-    console.log(data);
+  const onSubmit = handleSubmit(async (data: RegisterFormData) => {
+    data.password = await hashPassword(data.password);
+
+    try {
+      await createAccount(data);
+      showMessage({ title: 'アカウントの登録が完了しました', type: 'success' });
+      navigate(`/${data.user_id}/mypage`);
+    } catch {
+      showMessage({ title: 'アカウントの登録に失敗しました', type: 'error' });
+    }
   });
 
   return (
