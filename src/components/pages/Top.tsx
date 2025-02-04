@@ -7,7 +7,7 @@ import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { LoginFormData } from '@/domains/loginFormData';
 import { RegisterFormData } from '@/domains/registerFormData';
 import { useMessage } from '@/hooks/useMessage';
-import { createAccount } from '@/utils/supabaseFunctions';
+import { createAccount, fetchAccount } from '@/utils/supabaseFunctions';
 import { hashPassword } from '@/utils/auth';
 
 export const Top: React.FC = memo(() => {
@@ -50,7 +50,16 @@ export const Top: React.FC = memo(() => {
   });
 
   const onSubmitLogin = handleSubmitLogin(async (data: LoginFormData) => {
-    console.log(data);
+    data.password = await hashPassword(data.password);
+
+    try {
+      await fetchAccount(data);
+
+      showMessage({ title: 'ログインに成功しました', type: 'success' });
+      navigate(`/${data.user_id}/mypage`);
+    } catch {
+      showMessage({ title: 'ログインに失敗しました', type: 'error' });
+    }
   });
 
   return (
