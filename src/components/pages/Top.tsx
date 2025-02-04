@@ -14,9 +14,9 @@ export const Top: React.FC = memo(() => {
   const { showMessage } = useMessage();
 
   const {
-    control,
-    handleSubmit,
-    formState: { errors },
+    control: controlRegister,
+    handleSubmit: handleSubmitRegister,
+    formState: { errors: errorsRegister },
   } = useForm<RegisterFormData>({
     defaultValues: {
       user_id: '',
@@ -25,7 +25,7 @@ export const Top: React.FC = memo(() => {
     },
   });
 
-  const onSubmit = handleSubmit(async (data: RegisterFormData) => {
+  const onSubmit = handleSubmitRegister(async (data: RegisterFormData) => {
     data.password = await hashPassword(data.password);
 
     try {
@@ -54,10 +54,10 @@ export const Top: React.FC = memo(() => {
               <Tabs.Content value="register">
                 <form onSubmit={onSubmit}>
                   <Stack gap="4" width="full">
-                    <Field invalid={!!errors.user_id} errorText={errors.user_id?.message}>
+                    <Field invalid={!!errorsRegister.user_id} errorText={errorsRegister.user_id?.message}>
                       <Controller
                         name="user_id"
-                        control={control}
+                        control={controlRegister}
                         rules={{
                           required: 'ユーザーIDの入力は必須です',
                           pattern: { value: /^[a-zA-Z]+$/, message: 'ユーザーIDは半角英字で入力してください' },
@@ -65,20 +65,20 @@ export const Top: React.FC = memo(() => {
                         render={({ field }) => <Input {...field} placeholder="user id" />}
                       />
                     </Field>
-                    <Field invalid={!!errors.user_name} errorText={errors.user_name?.message}>
+                    <Field invalid={!!errorsRegister.user_name} errorText={errorsRegister.user_name?.message}>
                       <Controller
                         name="user_name"
-                        control={control}
+                        control={controlRegister}
                         rules={{
                           required: 'ユーザー名の入力は必須です',
                         }}
                         render={({ field }) => <Input {...field} placeholder="user name" />}
                       />
                     </Field>
-                    <Field invalid={!!errors.password} errorText={errors.password?.message}>
+                    <Field invalid={!!errorsRegister.password} errorText={errorsRegister.password?.message}>
                       <Controller
                         name="password"
-                        control={control}
+                        control={controlRegister}
                         rules={{
                           required: 'パスワードの入力は必須です',
                           minLength: { value: 8, message: 'パスワードは8文字以上で入力してください' },
