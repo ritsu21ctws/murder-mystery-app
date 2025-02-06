@@ -69,7 +69,7 @@ export const Top: React.FC = memo(() => {
           <Card.Body>
             <Tabs.Root defaultValue="register" mt="-3" fitted>
               <Tabs.List>
-                <Tabs.Trigger value="register" _before={{ backgroundColor: 'primary' }}>
+                <Tabs.Trigger value="register" _before={{ backgroundColor: 'primary' }} data-testid="title">
                   会員登録
                 </Tabs.Trigger>
                 <Tabs.Trigger value="login">ログイン</Tabs.Trigger>
