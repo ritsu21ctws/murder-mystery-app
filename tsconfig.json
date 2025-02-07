@@ -8,6 +8,5 @@
       "@/*": ["./src/*"]
     },
     "esModuleInterop": true
-  },
-  "exclude": ["src/components/ui/*"]
+  }
 }

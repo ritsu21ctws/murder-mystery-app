@@ -25,5 +25,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "./jest.setup.ts"]
+  "include": ["src", "./jest.setup.ts"],
+  "exclude": ["src/components/ui"]
 }
