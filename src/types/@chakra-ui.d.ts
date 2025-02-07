@@ -13,4 +13,18 @@ declare module '@chakra-ui/react' {
     children?: React.ReactNode;
     value?: string;
   }
+
+  export interface ToasterProps {
+    toaster: CreateToasterReturn;
+    children: (toast: toast.Options<ReactNode>) => ReactNode;
+    insetInline: {
+      mdDown: string;
+    };
+  }
+
+  export interface ToastCloseTriggerProps {
+    _hover?: {
+      cursor?: string;
+    };
+  }
 }
