@@ -9,5 +9,5 @@
     },
     "esModuleInterop": true
   },
-  "exclude": ["src/components/ui"]
+  "exclude": ["src/components/ui/*"]
 }
