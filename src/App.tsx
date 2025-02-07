@@ -1,9 +1,12 @@
-import "./App.css";
+import { Router } from '@/router/Router';
+import { Toaster } from '@/components/ui/toaster';
+import '@/types/@chakra-ui.d.ts';
 
 function App() {
   return (
     <>
-      <div data-testid="title">タイトル</div>
+      <Router />
+      <Toaster />
     </>
   );
 }
