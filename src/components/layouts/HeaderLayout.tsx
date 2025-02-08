@@ -16,7 +16,7 @@ export const HeaderLayout: React.FC = memo(() => {
     <>
       {/* ヘッダー */}
       <Flex as="nav" bg="primary" align="center" justify={{ base: 'center', sm: 'space-between' }} px={{ base: 3, sm: 5 }} py={{ base: 1, sm: 3 }}>
-        <Flex align="center" as="a" mr={{ base: 0, sm: 8 }} onClick={onClickMypage}>
+        <Flex align="center" mr={{ base: 0, sm: 8 }} onClick={onClickMypage}>
           <Link onClick={onClickMypage}>
             <Image src={logo} alt="MYSTERIAM logo" aspectRatio={3.5 / 1} w={{ base: 150, sm: 200 }} />
           </Link>
