@@ -1,6 +1,8 @@
 import { Account } from '@/domains/account';
 import { LoginFormData } from '@/domains/loginFormData';
 import { RegisterFormData } from '@/domains/registerFormData';
+import { Genre } from '@/domains/genre';
+import { PlayStyle } from '@/domains/playStyle';
 import { User } from '@/domains/user';
 import { supabase } from './supabase';
 
@@ -34,6 +36,26 @@ export const fetchUser = async (user_id: string): Promise<User> => {
     .eq('user_id', user_id)
     .returns<User>()
     .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const fetchGenres = async (): Promise<Array<Genre>> => {
+  const { data, error } = await supabase.from('genres').select('genre_id, name');
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const fetchPlayStyles = async (): Promise<Array<PlayStyle>> => {
+  const { data, error } = await supabase.from('play_styles').select('play_style_id, name');
 
   if (error) {
     throw new Error(error.message);
