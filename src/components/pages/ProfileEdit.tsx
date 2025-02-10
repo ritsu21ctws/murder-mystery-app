@@ -54,10 +54,13 @@ export const ProfileEdit: React.FC = memo(() => {
   const {
     control,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<ProfileFormData>({
     defaultValues: {
       user_name: '',
+      avatar_url: '',
       introduction: '',
       genres: [],
       play_styles: [],
@@ -85,14 +88,51 @@ export const ProfileEdit: React.FC = memo(() => {
                     <Avatar.Root size="2xl" mr="3">
                       <Avatar.Image src={defaultAvatar} />
                     </Avatar.Root>
-                    <FileUploadRoot>
-                      <FileUploadTrigger asChild>
-                        <Button variant="outline" size="sm" bg="gray.200" _hover={{ opacity: 0.8 }}>
-                          <HiUpload /> 画像のアップロード
-                        </Button>
-                      </FileUploadTrigger>
-                      <FileUploadList />
-                    </FileUploadRoot>
+                    <Field.Root invalid={!!errors.custom_errors}>
+                      <Controller
+                        name="avatar_url"
+                        control={control}
+                        render={({ field }) => (
+                          <FileUploadRoot
+                            name={field.name}
+                            accept={['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']}
+                            maxFileSize={2000000}
+                            onFileChange={(e) => {
+                              // ファイルアップロード成功時
+                              if (e.acceptedFiles.length > 0) {
+                                console.log(e.acceptedFiles[0]);
+                                clearErrors('custom_errors');
+                              }
+                              // ファイルアップロード失敗時
+                              if (e.rejectedFiles.length > 0) {
+                                setError('custom_errors', {
+                                  types: {
+                                    maxSize: e.rejectedFiles[0]?.errors.includes('FILE_TOO_LARGE')
+                                      ? 'アップロードファイルのサイズが2MBを超えています。'
+                                      : '',
+                                    invalidType: e.rejectedFiles[0]?.errors.includes('FILE_INVALID_TYPE')
+                                      ? 'アップロードファイルは.jpg、.jpeg、.png、.svgのいずれかの形式である必要があります。'
+                                      : '',
+                                  },
+                                });
+                              }
+                            }}
+                          >
+                            <FileUploadTrigger asChild>
+                              <Button variant="outline" size="sm" bg="gray.200" _hover={{ opacity: 0.8 }}>
+                                <HiUpload /> 画像のアップロード
+                              </Button>
+                            </FileUploadTrigger>
+                            <FileUploadList showSize clearable />
+                          </FileUploadRoot>
+                        )}
+                      />
+                      <Field.ErrorText>
+                        {errors.custom_errors?.types?.maxSize}
+                        {errors.custom_errors?.types?.maxSize && <br />}
+                        {errors.custom_errors?.types?.invalidType}
+                      </Field.ErrorText>
+                    </Field.Root>
                   </HStack>
                   <Field.Root invalid={!!errors.user_name}>
                     <Field.Label>ユーザー名 *</Field.Label>

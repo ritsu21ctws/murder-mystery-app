@@ -5,6 +5,7 @@ export class ProfileFormData {
     public avatar_url: string,
     public introduction: string,
     public genres: string[],
-    public play_styles: string[]
+    public play_styles: string[],
+    public custom_errors: string[]
   ) {}
 }
