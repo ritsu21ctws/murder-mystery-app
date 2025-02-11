@@ -3,6 +3,7 @@ import { LoginFormData } from '@/domains/loginFormData';
 import { RegisterFormData } from '@/domains/registerFormData';
 import { Genre } from '@/domains/genre';
 import { PlayStyle } from '@/domains/playStyle';
+import { ProfileFormData } from '@/domains/profileFormData';
 import { User } from '@/domains/user';
 import { supabase } from './supabase';
 
@@ -44,6 +45,23 @@ export const fetchUser = async (user_id: string): Promise<User> => {
   return data;
 };
 
+export const fetchUserDetail = async (user_id: string): Promise<User> => {
+  const { data, error } = await supabase
+    .from('accounts')
+    .select('user_id, profiles(profile_id, user_name, avatar_url, introduction), genres(genre_id, name), play_styles(play_style_id, name)')
+    .eq('user_id', user_id)
+    .returns<User>()
+    .single();
+
+  if (error) {
+    console.log(error.message);
+
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 export const fetchGenres = async (): Promise<Array<Genre>> => {
   const { data, error } = await supabase.from('genres').select('genre_id, name');
 
@@ -62,4 +80,21 @@ export const fetchPlayStyles = async (): Promise<Array<PlayStyle>> => {
   }
 
   return data;
+};
+
+export const updateProfile = async (user_id: string, formData: ProfileFormData): Promise<void> => {
+  const { profile_id, user_name, introduction, genres, play_styles } = formData;
+  const { error } = await supabase.rpc('update_profile', {
+    p_user_id: user_id,
+    p_profile_id: profile_id,
+    p_user_name: user_name,
+    p_introduction: introduction,
+    p_genres: genres,
+    p_play_styles: play_styles,
+  });
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
 };

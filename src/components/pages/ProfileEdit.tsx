@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Avatar,
@@ -12,6 +13,7 @@ import {
   Spinner,
   Stack,
   Textarea,
+  VisuallyHidden,
   createListCollection,
   ListCollection,
 } from '@chakra-ui/react';
@@ -21,26 +23,42 @@ import { HiUpload } from 'react-icons/hi';
 import { SecondaryButton } from '@/components/atoms/SecondaryButton';
 import defaultAvatar from '@/assets/defaut_avatar.svg';
 import { ProfileFormData } from '@/domains/profileFormData';
-import { fetchGenres, fetchPlayStyles } from '@/utils/supabaseFunctions';
+import { User } from '@/domains/user';
+import { fetchUserDetail, fetchGenres, fetchPlayStyles, updateProfile } from '@/utils/supabaseFunctions';
 import { useMessage } from '@/hooks/useMessage';
 
 export const ProfileEdit: React.FC = memo(() => {
+  const { user_id } = useParams();
   const { showMessage } = useMessage();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
+  const [userDetail, setUserDetail] = useState<User>();
   const [genres, setGenres] = useState<ListCollection<{ label: string; value: string }>>();
   const [playStyles, setPlayStyles] = useState<ListCollection<{ label: string; value: string }>>();
 
   useEffect(() => {
-    const getSelectOptions = async () => {
+    if (!user_id) {
+      showMessage({ title: 'ユーザー情報の取得に失敗しました', type: 'error' });
+      return;
+    }
+
+    const getSelectOptions = async (user_id: string) => {
       try {
         setLoading(true);
 
+        const userDetail = await fetchUserDetail(user_id);
+        console.log(userDetail);
         const genres = await fetchGenres();
         const playStyles = await fetchPlayStyles();
 
+        setUserDetail(userDetail);
         setGenres(createListCollection({ items: genres.map((genre) => ({ label: genre.name, value: genre.genre_id })) }));
         setPlayStyles(createListCollection({ items: playStyles.map((playStyle) => ({ label: playStyle.name, value: playStyle.play_style_id })) }));
+
+        setValue('user_name', userDetail?.profiles.user_name);
+        setValue('introduction', userDetail?.profiles.introduction || '');
+        setValue('profile_id', userDetail?.profiles.profile_id);
       } catch {
         showMessage({ title: 'データの取得に失敗しました', type: 'error' });
       } finally {
@@ -48,12 +66,13 @@ export const ProfileEdit: React.FC = memo(() => {
       }
     };
 
-    getSelectOptions();
+    getSelectOptions(user_id);
   }, []);
 
   const {
     control,
     handleSubmit,
+    setValue,
     setError,
     clearErrors,
     formState: { errors },
@@ -69,6 +88,24 @@ export const ProfileEdit: React.FC = memo(() => {
 
   const onSubmitProileEdit = handleSubmit((data: ProfileFormData) => {
     console.log(data);
+    if (!user_id) {
+      showMessage({ title: 'ユーザー情報の取得に失敗しました', type: 'error' });
+      return;
+    }
+
+    const updateProfileFromFormData = async () => {
+      try {
+        setLoadingUpload(true);
+        await updateProfile(user_id, data);
+        showMessage({ title: 'プロフィールの更新が完了しました', type: 'success' });
+      } catch {
+        showMessage({ title: 'プロフィールの更新に失敗しました', type: 'error' });
+      } finally {
+        setLoadingUpload(false);
+      }
+    };
+
+    updateProfileFromFormData();
   });
 
   return (
@@ -101,6 +138,8 @@ export const ProfileEdit: React.FC = memo(() => {
                               // ファイルアップロード成功時
                               if (e.acceptedFiles.length > 0) {
                                 console.log(e.acceptedFiles[0]);
+                                console.log(typeof e.acceptedFiles[0]);
+
                                 clearErrors('custom_errors');
                               }
                               // ファイルアップロード失敗時
@@ -209,8 +248,12 @@ export const ProfileEdit: React.FC = memo(() => {
                     />
                     <Field.ErrorText>{errors.play_styles?.message}</Field.ErrorText>
                   </Field.Root>
-
-                  <SecondaryButton>更新する</SecondaryButton>
+                  <VisuallyHidden asChild>
+                    <Field.Root>
+                      <Controller name="profile_id" control={control} render={({ field }) => <Input {...field} />} />
+                    </Field.Root>
+                  </VisuallyHidden>
+                  <SecondaryButton loading={loadingUpload}>更新する</SecondaryButton>
                 </Stack>
               </form>
             </Stack>
