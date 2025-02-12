@@ -98,3 +98,16 @@ export const updateProfile = async (user_id: string, formData: ProfileFormData):
     throw new Error(error.message);
   }
 };
+
+export const uploadAvatar = async (uploadFile: File, userId: string): Promise<void> => {
+  const file = uploadFile;
+  const fileExt = file.name.split('.').pop();
+  const filePath = `${userId}/${Math.random()}.${fileExt}`;
+
+  const { error } = await supabase.storage.from('avatars').upload(filePath, file);
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+};
