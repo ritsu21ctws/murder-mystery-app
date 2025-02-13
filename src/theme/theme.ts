@@ -26,6 +26,9 @@ const customConfig = defineConfig({
         body: { value: '"Noto Sans JP", serif' },
         heading: { value: '"Noto Serif JP", serif' },
       },
+      cursor: {
+        option: { value: 'pointer' },
+      },
     },
   },
 });
