@@ -55,7 +55,6 @@ export const fetchUserDetail = async (user_id: string): Promise<User> => {
 
   if (error) {
     console.log(error.message);
-
     throw new Error(error.message);
   }
 
@@ -83,11 +82,12 @@ export const fetchPlayStyles = async (): Promise<Array<PlayStyle>> => {
 };
 
 export const updateProfile = async (user_id: string, formData: ProfileFormData): Promise<void> => {
-  const { profile_id, user_name, introduction, genres, play_styles } = formData;
+  const { profile_id, user_name, avatar_url, introduction, genres, play_styles } = formData;
   const { error } = await supabase.rpc('update_profile', {
     p_user_id: user_id,
     p_profile_id: profile_id,
     p_user_name: user_name,
+    p_avatar_url: avatar_url,
     p_introduction: introduction,
     p_genres: genres,
     p_play_styles: play_styles,
@@ -99,7 +99,7 @@ export const updateProfile = async (user_id: string, formData: ProfileFormData):
   }
 };
 
-export const uploadAvatar = async (uploadFile: File, userId: string): Promise<void> => {
+export const uploadAvatar = async (userId: string, uploadFile: File): Promise<string> => {
   const file = uploadFile;
   const fileExt = file.name.split('.').pop();
   const filePath = `${userId}/${Math.random()}.${fileExt}`;
@@ -110,4 +110,20 @@ export const uploadAvatar = async (uploadFile: File, userId: string): Promise<vo
     console.log(error.message);
     throw new Error(error.message);
   }
+
+  return filePath;
+};
+
+export const getAvatarUrl = async (avatar_url: string | undefined): Promise<string | undefined> => {
+  if (!avatar_url) return undefined;
+
+  const { data, error } = await supabase.storage.from('avatars').createSignedUrl(avatar_url, 600);
+  const avatarUrl = data?.signedUrl;
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+
+  return avatarUrl;
 };

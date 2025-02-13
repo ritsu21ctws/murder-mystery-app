@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Avatar,
@@ -24,18 +24,21 @@ import { SecondaryButton } from '@/components/atoms/SecondaryButton';
 import defaultAvatar from '@/assets/defaut_avatar.svg';
 import { ProfileFormData } from '@/domains/profileFormData';
 import { User } from '@/domains/user';
-import { fetchUserDetail, fetchGenres, fetchPlayStyles, updateProfile } from '@/utils/supabaseFunctions';
+import { fetchUserDetail, fetchGenres, fetchPlayStyles, updateProfile, uploadAvatar, getAvatarUrl } from '@/utils/supabaseFunctions';
 import { useMessage } from '@/hooks/useMessage';
 
 export const ProfileEdit: React.FC = memo(() => {
+  const navigate = useNavigate();
   const { user_id } = useParams();
   const { showMessage } = useMessage();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
   const [userDetail, setUserDetail] = useState<User>();
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
   const [genres, setGenres] = useState<ListCollection<{ label: string; value: string }>>();
   const [playStyles, setPlayStyles] = useState<ListCollection<{ label: string; value: string }>>();
+  const [newAvatar, setNewAvatar] = useState<File | null>(null);
 
   useEffect(() => {
     if (!user_id) {
@@ -43,16 +46,18 @@ export const ProfileEdit: React.FC = memo(() => {
       return;
     }
 
-    const getSelectOptions = async (user_id: string) => {
+    const getUserDetailWithSelectOptions = async (user_id: string) => {
       try {
         setLoading(true);
 
         const userDetail = await fetchUserDetail(user_id);
-        console.log(userDetail);
+        const avatarUrl = await getAvatarUrl(userDetail.profiles.avatar_url);
+
         const genres = await fetchGenres();
         const playStyles = await fetchPlayStyles();
 
         setUserDetail(userDetail);
+        setAvatarUrl(avatarUrl);
         setGenres(createListCollection({ items: genres.map((genre) => ({ label: genre.name, value: genre.genre_id })) }));
         setPlayStyles(createListCollection({ items: playStyles.map((playStyle) => ({ label: playStyle.name, value: playStyle.play_style_id })) }));
 
@@ -66,7 +71,7 @@ export const ProfileEdit: React.FC = memo(() => {
       }
     };
 
-    getSelectOptions(user_id);
+    getUserDetailWithSelectOptions(user_id);
   }, []);
 
   const {
@@ -96,8 +101,15 @@ export const ProfileEdit: React.FC = memo(() => {
     const updateProfileFromFormData = async () => {
       try {
         setLoadingUpload(true);
+
+        data.avatar_url = userDetail?.profiles.avatar_url;
+        if (newAvatar) {
+          data.avatar_url = await uploadAvatar(user_id, newAvatar);
+        }
         await updateProfile(user_id, data);
+
         showMessage({ title: 'プロフィールの更新が完了しました', type: 'success' });
+        navigate(`/${user_id}/mypage`);
       } catch {
         showMessage({ title: 'プロフィールの更新に失敗しました', type: 'error' });
       } finally {
@@ -123,7 +135,7 @@ export const ProfileEdit: React.FC = memo(() => {
                 <Stack gap="6">
                   <HStack>
                     <Avatar.Root size="2xl" mr="3">
-                      <Avatar.Image src={defaultAvatar} />
+                      {avatarUrl ? <Avatar.Image src={avatarUrl} /> : <Avatar.Image src={defaultAvatar} />}
                     </Avatar.Root>
                     <Field.Root invalid={!!errors.custom_errors}>
                       <Controller
@@ -137,10 +149,9 @@ export const ProfileEdit: React.FC = memo(() => {
                             onFileChange={(e) => {
                               // ファイルアップロード成功時
                               if (e.acceptedFiles.length > 0) {
-                                console.log(e.acceptedFiles[0]);
-                                console.log(typeof e.acceptedFiles[0]);
-
                                 clearErrors('custom_errors');
+                                setAvatarUrl(URL.createObjectURL(e.acceptedFiles[0]));
+                                setNewAvatar(e.acceptedFiles[0]);
                               }
                               // ファイルアップロード失敗時
                               if (e.rejectedFiles.length > 0) {
