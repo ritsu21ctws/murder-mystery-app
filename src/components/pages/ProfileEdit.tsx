@@ -56,14 +56,20 @@ export const ProfileEdit: React.FC = memo(() => {
         const genres = await fetchGenres();
         const playStyles = await fetchPlayStyles();
 
+        // ユーザー情報をセット
         setUserDetail(userDetail);
         setAvatarUrl(avatarUrl);
+
+        // セレクトボックスの選択肢をセット
         setGenres(createListCollection({ items: genres.map((genre) => ({ label: genre.name, value: genre.genre_id })) }));
         setPlayStyles(createListCollection({ items: playStyles.map((playStyle) => ({ label: playStyle.name, value: playStyle.play_style_id })) }));
 
+        // フォームにDBからの値をセット
         setValue('user_name', userDetail?.profiles.user_name);
         setValue('introduction', userDetail?.profiles.introduction || '');
         setValue('profile_id', userDetail?.profiles.profile_id);
+        setValue('genres', Array.isArray(userDetail?.genres) ? userDetail.genres.map((obj) => obj.genre_id) : []);
+        setValue('play_styles', Array.isArray(userDetail?.play_styles) ? userDetail.play_styles.map((obj) => obj.play_style_id) : []);
       } catch {
         showMessage({ title: 'データの取得に失敗しました', type: 'error' });
       } finally {
