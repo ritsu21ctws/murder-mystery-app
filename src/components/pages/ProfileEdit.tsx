@@ -21,7 +21,7 @@ import { FileUploadList, FileUploadRoot, FileUploadTrigger } from '@/components/
 import { SelectContent, SelectItem, SelectRoot, SelectTrigger, SelectValueText } from '@/components/ui/select';
 import { HiUpload } from 'react-icons/hi';
 import { SecondaryButton } from '@/components/atoms/SecondaryButton';
-import defaultAvatar from '@/assets/defaut_avatar.svg';
+import defaultAvatar from '@/assets/defautAvatar.svg';
 import { ProfileFormData } from '@/domains/profileFormData';
 import { User } from '@/domains/user';
 import { fetchUserDetail, fetchGenres, fetchPlayStyles, updateProfile, uploadAvatar, getAvatarUrl } from '@/utils/supabaseFunctions';

@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { useNavigate } from 'react-router';
 import { Card, Image } from '@chakra-ui/react';
 import { PrimaryButton } from '../atoms/PrimaryButton';
-import defaultAvatar from '@/assets/defaut_avatar.svg';
+import defaultAvatar from '@/assets/defautAvatar.svg';
 
 type Props = {
   userId: string;
