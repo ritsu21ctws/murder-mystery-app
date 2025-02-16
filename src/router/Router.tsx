@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Routes, Route } from 'react-router';
-import { HeaderLayout } from '@/components/layouts/HeaderLayout';
+import { Layout } from '@/components/layouts/Layout';
 import { Top } from '@/components/pages/Top';
 import { Mypage } from '@/components/pages/Mypage';
 import { EventCreate } from '@/components/pages/EventCreate';
@@ -15,7 +15,7 @@ export const Router: React.FC = memo(() => {
   return (
     <Routes>
       <Route path="/" element={<Top />} />
-      <Route path="/:user_id" element={<HeaderLayout />}>
+      <Route path="/:user_id" element={<Layout />}>
         <Route index element={<Mypage />} />
         <Route path="mypage" element={<Mypage />} />
         <Route path="edit" element={<ProfileEdit />} />
