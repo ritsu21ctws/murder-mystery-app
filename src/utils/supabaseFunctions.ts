@@ -1,9 +1,10 @@
 import { Account } from '@/domains/account';
 import { LoginFormData } from '@/domains/loginFormData';
-import { RegisterFormData } from '@/domains/registerFormData';
+import { EventFormData } from '@/domains/eventFormData';
 import { Genre } from '@/domains/genre';
 import { PlayStyle } from '@/domains/playStyle';
 import { ProfileFormData } from '@/domains/profileFormData';
+import { RegisterFormData } from '@/domains/registerFormData';
 import { User } from '@/domains/user';
 import { supabase } from './supabase';
 
@@ -126,4 +127,13 @@ export const getAvatarUrl = async (avatar_url: string | undefined): Promise<stri
   }
 
   return avatarUrl;
+};
+
+export const createEvent = async (formData: EventFormData): Promise<void> => {
+  const { error } = await supabase.rpc('insert_event', formData);
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
 };
