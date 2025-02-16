@@ -10,10 +10,10 @@ type Props = {
   onClick?: () => void;
 };
 
-export const PrimaryButton: React.FC<Props> = memo((props) => {
+export const ActionButton: React.FC<Props> = memo((props) => {
   const { children, type, width, disabled = false, loading = false, onClick } = props;
   return (
-    <Button bg="primary" type={type} width={width} _hover={{ opacity: 0.8 }} disabled={disabled || loading} loading={loading} onClick={onClick}>
+    <Button bg="btn.action" type={type} width={width} _hover={{ opacity: 0.8 }} disabled={disabled || loading} loading={loading} onClick={onClick}>
       {children}
     </Button>
   );
