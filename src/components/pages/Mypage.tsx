@@ -46,7 +46,7 @@ export const Mypage: React.FC = memo(() => {
           <Spinner />
         </Center>
       ) : (
-        <Container mt={{ base: '4', sm: '10' }} textAlign="center">
+        <Container my={{ base: '4', sm: '10' }} textAlign="center">
           <HStack align="start">
             {user && <UserCard userId={user.user_id} avatarUrl={avatarUrl} userName={user.profiles.user_name} />}
             {/* Todo:おすすめイベント */}

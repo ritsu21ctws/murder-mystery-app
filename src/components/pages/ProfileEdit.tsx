@@ -133,7 +133,7 @@ export const ProfileEdit: React.FC = memo(() => {
           <Spinner />
         </Center>
       ) : (
-        <Container mt={{ base: '5', sm: '10' }}>
+        <Container my={{ base: '5', sm: '10' }}>
           <Center>
             <Stack gap={{ base: '5', sm: '7' }} width="md">
               <Heading textAlign="center">プロフィール編集</Heading>

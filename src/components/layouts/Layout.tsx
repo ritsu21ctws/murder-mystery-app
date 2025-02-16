@@ -14,12 +14,14 @@ export const Layout: React.FC = memo(() => {
   const onClickJoinedEvents = () => navigate(`/${user_id}/events/joined`);
 
   return (
-    <Box minH="100vh">
-      {/* ヘッダー */}
-      <Header onClickMypage={onClickMypage} onClickHostedEvents={onClickHostedEvents} onClickJoinedEvents={onClickJoinedEvents} />
+    <Box>
+      <Box minH="calc(100vh - 42px)">
+        {/* ヘッダー */}
+        <Header onClickMypage={onClickMypage} onClickHostedEvents={onClickHostedEvents} onClickJoinedEvents={onClickJoinedEvents} />
 
-      {/* コンテンツ */}
-      <Outlet />
+        {/* コンテンツ */}
+        <Outlet />
+      </Box>
 
       {/* スマホ用メニュー */}
       <SpMenu onClickMypage={onClickMypage} onClickHostedEvents={onClickHostedEvents} onClickJoinedEvents={onClickJoinedEvents} />
