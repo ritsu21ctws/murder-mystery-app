@@ -19,7 +19,7 @@ const customConfig = defineConfig({
         },
         btn: {
           cancel: { value: '#7F8C8D' },
-          action: { value: '#2ECC71' },
+          action: { value: '#3498DB' },
         },
       },
       fonts: {
