@@ -100,7 +100,9 @@ export const HostedEvents: React.FC = memo(() => {
                       </Table.Cell>
                       <Table.Cell textAlign="left">{hostedEvent.genres.map((genre) => genre.name).join(', ')}</Table.Cell>
                       <Table.Cell textAlign="left">{hostedEvent.play_styles.map((play_style) => play_style.name).join(', ')}</Table.Cell>
-                      <Table.Cell textAlign="center">{hostedEvent.profiles[0].count}</Table.Cell>
+                      <Table.Cell textAlign="center">
+                        {hostedEvent.profiles[0].count} / {hostedEvent.max_user_num}
+                      </Table.Cell>
                       <Table.Cell textAlign="end">
                         <HStack justifyContent="right">
                           <Button colorPalette="gray" variant="outline" onClick={() => onClickShowEvent(hostedEvent.event_id)}>
