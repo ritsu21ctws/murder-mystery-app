@@ -10,6 +10,7 @@ export class EventDetail {
     public detail: string,
     public genres: Genre[],
     public play_styles: PlayStyle[],
-    public profiles: Profile[]
+    public profiles: Profile[],
+    public created_by: string
   ) {}
 }

@@ -148,7 +148,7 @@ export const fetchEventDetail = async (event_id: string): Promise<EventDetail> =
   const { data, error } = await supabase
     .from('events')
     .select(
-      'event_id, name, max_user_num, detail, genres(genre_id, name), play_styles(play_style_id, name), profiles(profile_id, user_name, avatar_url)'
+      'event_id, name, max_user_num, detail, created_by, genres(genre_id, name), play_styles(play_style_id, name), profiles(profile_id, user_name, avatar_url)'
     )
     .eq('event_id', event_id)
     .returns<EventDetail>()

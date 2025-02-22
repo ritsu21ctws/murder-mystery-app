@@ -1,11 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Avatar, Card, Center, Container, DataList, Heading, HStack, Link, Spinner, Stack, Tag, Text } from '@chakra-ui/react';
+import { Avatar, Card, Center, Container, DataList, Flex, Heading, HStack, Link, Spinner, Stack, Tag, Text } from '@chakra-ui/react';
 import { Tooltip } from '@/components/ui/tooltip';
 import { EventDetail } from '@/domains/eventDetail';
 import { fetchEventDetail } from '@/utils/supabaseFunctions';
 import { useMessage } from '@/hooks/useMessage';
 import defaultAvatar from '@/assets/defautAvatar.svg';
+import { PrimaryButton } from '../atoms/PrimaryButton';
 
 export const EventShow: React.FC = memo(() => {
   const navigate = useNavigate();
@@ -51,6 +52,10 @@ export const EventShow: React.FC = memo(() => {
 
   const onClickShowProfile = (profile_id: string) => {
     navigate(`/${user_id}/profile/${profile_id}`);
+  };
+
+  const onClickEditEvent = () => {
+    navigate(`/${user_id}/events/${event_id}/edit`);
   };
 
   return (
@@ -124,7 +129,9 @@ export const EventShow: React.FC = memo(() => {
                 </DataList.Root>
               </Stack>
             </Card.Body>
-            <Card.Footer />
+            <Card.Footer justifyContent="center">
+              {event?.created_by === user_id && <PrimaryButton onClick={onClickEditEvent}>編集</PrimaryButton>}
+            </Card.Footer>
           </Card.Root>
         </Container>
       )}
