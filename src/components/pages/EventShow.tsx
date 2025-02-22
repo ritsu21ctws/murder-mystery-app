@@ -141,7 +141,7 @@ export const EventShow: React.FC = memo(() => {
                     <DataList.Item pt="4">
                       <DataList.ItemLabel>ジャンル</DataList.ItemLabel>
                       <DataList.ItemValue>
-                        <HStack>
+                        <HStack flexWrap="wrap">
                           {event?.genres?.map((genre) => (
                             <Tag.Root key={genre.genre_id}>
                               <Tag.Label>{genre.name}</Tag.Label>
@@ -153,7 +153,7 @@ export const EventShow: React.FC = memo(() => {
                     <DataList.Item pt="4">
                       <DataList.ItemLabel>プレイスタイル</DataList.ItemLabel>
                       <DataList.ItemValue>
-                        <HStack>
+                        <HStack flexWrap="wrap">
                           {event?.play_styles?.map((play_style) => (
                             <Tag.Root key={play_style.play_style_id}>
                               <Tag.Label>{play_style.name}</Tag.Label>

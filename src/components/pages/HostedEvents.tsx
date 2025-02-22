@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Center, Container, Heading, HStack, Spinner, Table, Text, Flex } from '@chakra-ui/react';
+import { Button, Center, Container, Heading, HStack, Spinner, Table, Tag, Text, Flex } from '@chakra-ui/react';
 import { FiEdit, FiFileText } from 'react-icons/fi';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { Event } from '@/domains/event';
@@ -91,8 +91,24 @@ export const HostedEvents: React.FC = memo(() => {
                     <Table.Cell textAlign="left">
                       <Text lineClamp="1">{hostedEvent.detail}</Text>
                     </Table.Cell>
-                    <Table.Cell textAlign="left">{hostedEvent.genres.map((genre) => genre.name).join(', ')}</Table.Cell>
-                    <Table.Cell textAlign="left">{hostedEvent.play_styles.map((play_style) => play_style.name).join(', ')}</Table.Cell>
+                    <Table.Cell textAlign="left">
+                      <HStack flexWrap="wrap">
+                        {hostedEvent.genres.map((genre) => (
+                          <Tag.Root key={genre.genre_id}>
+                            <Tag.Label>{genre.name}</Tag.Label>
+                          </Tag.Root>
+                        ))}
+                      </HStack>
+                    </Table.Cell>
+                    <Table.Cell textAlign="left">
+                      <HStack flexWrap="wrap">
+                        {hostedEvent.play_styles.map((play_style) => (
+                          <Tag.Root key={play_style.play_style_id}>
+                            <Tag.Label>{play_style.name}</Tag.Label>
+                          </Tag.Root>
+                        ))}
+                      </HStack>
+                    </Table.Cell>
                     <Table.Cell textAlign="center">
                       {hostedEvent.profiles[0].count} / {hostedEvent.max_user_num}
                     </Table.Cell>
