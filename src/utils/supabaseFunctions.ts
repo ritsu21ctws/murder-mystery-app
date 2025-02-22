@@ -161,3 +161,12 @@ export const fetchEventDetail = async (event_id: string): Promise<EventDetail> =
 
   return data;
 };
+
+export const deleteEvent = async (event_id: string): Promise<void> => {
+  const { error } = await supabase.from('events').delete().eq('event_id', event_id);
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+};
