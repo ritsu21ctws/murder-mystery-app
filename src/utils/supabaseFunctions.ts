@@ -2,6 +2,7 @@ import { Account } from '@/domains/account';
 import { LoginFormData } from '@/domains/loginFormData';
 import { EventFormData } from '@/domains/eventFormData';
 import { Event } from '@/domains/event';
+import { EventDetail } from '@/domains/eventDetail';
 import { Genre } from '@/domains/genre';
 import { PlayStyle } from '@/domains/playStyle';
 import { ProfileFormData } from '@/domains/profileFormData';
@@ -134,6 +135,24 @@ export const fetchHostedEvents = async (user_id: string): Promise<Event[]> => {
     .select('event_id, name, max_user_num, detail, genres(genre_id, name), play_styles(play_style_id, name), profiles(count)')
     .eq('created_by', user_id)
     .returns<Event[]>();
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const fetchEventDetail = async (event_id: string): Promise<EventDetail> => {
+  const { data, error } = await supabase
+    .from('events')
+    .select(
+      'event_id, name, max_user_num, detail, genres(genre_id, name), play_styles(play_style_id, name), profiles(profile_id, user_name, avatar_url)'
+    )
+    .eq('event_id', event_id)
+    .returns<EventDetail>()
+    .single();
 
   if (error) {
     console.log(error.message);
