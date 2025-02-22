@@ -132,148 +132,146 @@ export const ProfileEdit: React.FC = memo(() => {
           <Spinner />
         </Center>
       ) : (
-        <Container my={{ base: '5', sm: '10' }}>
-          <Center>
-            <Stack gap={{ base: '5', sm: '7' }} width="md">
-              <Heading textAlign="center">プロフィール編集</Heading>
-              <form onSubmit={onSubmitProileEdit}>
-                <Stack gap="6">
-                  <HStack>
-                    <Avatar.Root size="2xl" mr="3">
-                      {avatarUrl ? <Avatar.Image src={avatarUrl} /> : <Avatar.Image src={defaultAvatar} />}
-                    </Avatar.Root>
-                    <Field.Root invalid={!!errors.custom_errors}>
-                      <Controller
-                        name="avatar_url"
-                        control={control}
-                        render={({ field }) => (
-                          <FileUploadRoot
-                            name={field.name}
-                            accept={['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']}
-                            maxFileSize={2000000}
-                            onFileChange={(e) => {
-                              // ファイルアップロード成功時
-                              if (e.acceptedFiles.length > 0) {
-                                clearErrors('custom_errors');
-                                setAvatarUrl(URL.createObjectURL(e.acceptedFiles[0]));
-                                setNewAvatar(e.acceptedFiles[0]);
-                              }
-                              // ファイルアップロード失敗時
-                              if (e.rejectedFiles.length > 0) {
-                                setError('custom_errors', {
-                                  types: {
-                                    maxSize: e.rejectedFiles[0]?.errors.includes('FILE_TOO_LARGE')
-                                      ? 'アップロードファイルのサイズが2MBを超えています。'
-                                      : '',
-                                    invalidType: e.rejectedFiles[0]?.errors.includes('FILE_INVALID_TYPE')
-                                      ? 'アップロードファイルは.jpg、.jpeg、.png、.svgのいずれかの形式である必要があります。'
-                                      : '',
-                                  },
-                                });
-                              }
-                            }}
-                          >
-                            <FileUploadTrigger asChild>
-                              <Button variant="outline" size="sm" bg="gray.200" _hover={{ opacity: 0.8 }}>
-                                <HiUpload /> 画像のアップロード
-                              </Button>
-                            </FileUploadTrigger>
-                            <FileUploadList showSize clearable />
-                          </FileUploadRoot>
-                        )}
-                      />
-                      <Field.ErrorText>
-                        {errors.custom_errors?.types?.maxSize}
-                        {errors.custom_errors?.types?.maxSize && <br />}
-                        {errors.custom_errors?.types?.invalidType}
-                      </Field.ErrorText>
-                    </Field.Root>
-                  </HStack>
-                  <Field.Root invalid={!!errors.user_name}>
-                    <Field.Label>ユーザー名 *</Field.Label>
+        <Container my={{ base: '5', sm: '10' }} centerContent>
+          <Stack gap={{ base: '5', sm: '7' }} width="md">
+            <Heading textAlign="center">プロフィール編集</Heading>
+            <form onSubmit={onSubmitProileEdit}>
+              <Stack gap="6">
+                <HStack>
+                  <Avatar.Root size="2xl" mr="3">
+                    {avatarUrl ? <Avatar.Image src={avatarUrl} /> : <Avatar.Image src={defaultAvatar} />}
+                  </Avatar.Root>
+                  <Field.Root invalid={!!errors.custom_errors}>
                     <Controller
-                      name="user_name"
-                      control={control}
-                      rules={{
-                        required: 'ユーザー名の入力は必須です',
-                      }}
-                      render={({ field }) => <Input {...field} bg="white" />}
-                    />
-                    <Field.ErrorText>{errors.user_name?.message}</Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root invalid={!!errors.introduction}>
-                    <Field.Label>自己紹介</Field.Label>
-                    <Controller name="introduction" control={control} render={({ field }) => <Textarea {...field} bg="white" />} />
-                    <Field.ErrorText>{errors.introduction?.message}</Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root invalid={!!errors.genres}>
-                    <Field.Label>好きなジャンル</Field.Label>
-                    <Controller
-                      name="genres"
+                      name="avatar_url"
                       control={control}
                       render={({ field }) => (
-                        <SelectRoot
+                        <FileUploadRoot
                           name={field.name}
-                          value={field.value}
-                          onValueChange={({ value }) => field.onChange(value)}
-                          onInteractOutside={() => field.onBlur()}
-                          multiple
-                          collection={genres || createListCollection({ items: [] })}
+                          accept={['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']}
+                          maxFileSize={2000000}
+                          onFileChange={(e) => {
+                            // ファイルアップロード成功時
+                            if (e.acceptedFiles.length > 0) {
+                              clearErrors('custom_errors');
+                              setAvatarUrl(URL.createObjectURL(e.acceptedFiles[0]));
+                              setNewAvatar(e.acceptedFiles[0]);
+                            }
+                            // ファイルアップロード失敗時
+                            if (e.rejectedFiles.length > 0) {
+                              setError('custom_errors', {
+                                types: {
+                                  maxSize: e.rejectedFiles[0]?.errors.includes('FILE_TOO_LARGE')
+                                    ? 'アップロードファイルのサイズが2MBを超えています。'
+                                    : '',
+                                  invalidType: e.rejectedFiles[0]?.errors.includes('FILE_INVALID_TYPE')
+                                    ? 'アップロードファイルは.jpg、.jpeg、.png、.svgのいずれかの形式である必要があります。'
+                                    : '',
+                                },
+                              });
+                            }
+                          }}
                         >
-                          <SelectTrigger bg="white">
-                            <SelectValueText placeholder="Select Option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {genres?.items.map((genre) => (
-                              <SelectItem item={genre} key={genre.value}>
-                                {genre.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </SelectRoot>
+                          <FileUploadTrigger asChild>
+                            <Button variant="outline" size="sm" bg="gray.200" _hover={{ opacity: 0.8 }}>
+                              <HiUpload /> 画像のアップロード
+                            </Button>
+                          </FileUploadTrigger>
+                          <FileUploadList showSize clearable />
+                        </FileUploadRoot>
                       )}
                     />
-                    <Field.ErrorText>{errors.genres?.message}</Field.ErrorText>
+                    <Field.ErrorText>
+                      {errors.custom_errors?.types?.maxSize}
+                      {errors.custom_errors?.types?.maxSize && <br />}
+                      {errors.custom_errors?.types?.invalidType}
+                    </Field.ErrorText>
                   </Field.Root>
-                  <Field.Root invalid={!!errors.play_styles}>
-                    <Field.Label>プレイスタイル</Field.Label>
-                    <Controller
-                      name="play_styles"
-                      control={control}
-                      render={({ field }) => (
-                        <SelectRoot
-                          name={field.name}
-                          value={field.value}
-                          onValueChange={({ value }) => field.onChange(value)}
-                          onInteractOutside={() => field.onBlur()}
-                          multiple
-                          collection={playStyles || createListCollection({ items: [] })}
-                        >
-                          <SelectTrigger bg="white">
-                            <SelectValueText placeholder="Select Option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {playStyles?.items.map((playStyle) => (
-                              <SelectItem item={playStyle} key={playStyle.value}>
-                                {playStyle.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </SelectRoot>
-                      )}
-                    />
-                    <Field.ErrorText>{errors.play_styles?.message}</Field.ErrorText>
+                </HStack>
+                <Field.Root invalid={!!errors.user_name}>
+                  <Field.Label>ユーザー名 *</Field.Label>
+                  <Controller
+                    name="user_name"
+                    control={control}
+                    rules={{
+                      required: 'ユーザー名の入力は必須です',
+                    }}
+                    render={({ field }) => <Input {...field} bg="white" />}
+                  />
+                  <Field.ErrorText>{errors.user_name?.message}</Field.ErrorText>
+                </Field.Root>
+                <Field.Root invalid={!!errors.introduction}>
+                  <Field.Label>自己紹介</Field.Label>
+                  <Controller name="introduction" control={control} render={({ field }) => <Textarea {...field} bg="white" />} />
+                  <Field.ErrorText>{errors.introduction?.message}</Field.ErrorText>
+                </Field.Root>
+                <Field.Root invalid={!!errors.genres}>
+                  <Field.Label>好きなジャンル</Field.Label>
+                  <Controller
+                    name="genres"
+                    control={control}
+                    render={({ field }) => (
+                      <SelectRoot
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={({ value }) => field.onChange(value)}
+                        onInteractOutside={() => field.onBlur()}
+                        multiple
+                        collection={genres || createListCollection({ items: [] })}
+                      >
+                        <SelectTrigger bg="white">
+                          <SelectValueText placeholder="Select Option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {genres?.items.map((genre) => (
+                            <SelectItem item={genre} key={genre.value}>
+                              {genre.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </SelectRoot>
+                    )}
+                  />
+                  <Field.ErrorText>{errors.genres?.message}</Field.ErrorText>
+                </Field.Root>
+                <Field.Root invalid={!!errors.play_styles}>
+                  <Field.Label>プレイスタイル</Field.Label>
+                  <Controller
+                    name="play_styles"
+                    control={control}
+                    render={({ field }) => (
+                      <SelectRoot
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={({ value }) => field.onChange(value)}
+                        onInteractOutside={() => field.onBlur()}
+                        multiple
+                        collection={playStyles || createListCollection({ items: [] })}
+                      >
+                        <SelectTrigger bg="white">
+                          <SelectValueText placeholder="Select Option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {playStyles?.items.map((playStyle) => (
+                            <SelectItem item={playStyle} key={playStyle.value}>
+                              {playStyle.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </SelectRoot>
+                    )}
+                  />
+                  <Field.ErrorText>{errors.play_styles?.message}</Field.ErrorText>
+                </Field.Root>
+                <VisuallyHidden asChild>
+                  <Field.Root>
+                    <Controller name="profile_id" control={control} render={({ field }) => <Input {...field} />} />
                   </Field.Root>
-                  <VisuallyHidden asChild>
-                    <Field.Root>
-                      <Controller name="profile_id" control={control} render={({ field }) => <Input {...field} />} />
-                    </Field.Root>
-                  </VisuallyHidden>
-                  <SecondaryButton loading={loadingUpload}>更新する</SecondaryButton>
-                </Stack>
-              </form>
-            </Stack>
-          </Center>
+                </VisuallyHidden>
+                <SecondaryButton loading={loadingUpload}>更新する</SecondaryButton>
+              </Stack>
+            </form>
+          </Stack>
         </Container>
       )}
     </>
