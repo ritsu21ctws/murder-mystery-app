@@ -113,21 +113,10 @@ export const uploadAvatar = async (userId: string, uploadFile: File): Promise<st
     throw new Error(error.message);
   }
 
-  return filePath;
-};
+  const { data } = await supabase.storage.from('avatars').getPublicUrl(filePath);
+  console.log(data);
 
-export const getAvatarUrl = async (avatar_url: string | undefined): Promise<string | undefined> => {
-  if (!avatar_url) return undefined;
-
-  const { data, error } = await supabase.storage.from('avatars').createSignedUrl(avatar_url, 600);
-  const avatarUrl = data?.signedUrl;
-
-  if (error) {
-    console.log(error.message);
-    throw new Error(error.message);
-  }
-
-  return avatarUrl;
+  return data.publicUrl;
 };
 
 export const createEvent = async (formData: EventFormData): Promise<void> => {

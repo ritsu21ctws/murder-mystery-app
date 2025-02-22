@@ -24,7 +24,7 @@ import { SecondaryButton } from '@/components/atoms/SecondaryButton';
 import defaultAvatar from '@/assets/defautAvatar.svg';
 import { ProfileFormData } from '@/domains/profileFormData';
 import { User } from '@/domains/user';
-import { fetchUserDetail, fetchGenres, fetchPlayStyles, updateProfile, uploadAvatar, getAvatarUrl } from '@/utils/supabaseFunctions';
+import { fetchUserDetail, fetchGenres, fetchPlayStyles, updateProfile, uploadAvatar } from '@/utils/supabaseFunctions';
 import { useMessage } from '@/hooks/useMessage';
 
 export const ProfileEdit: React.FC = memo(() => {
@@ -51,14 +51,13 @@ export const ProfileEdit: React.FC = memo(() => {
         setLoading(true);
 
         const userDetail = await fetchUserDetail(user_id);
-        const avatarUrl = await getAvatarUrl(userDetail.profiles.avatar_url);
 
         const genres = await fetchGenres();
         const playStyles = await fetchPlayStyles();
 
         // ユーザー情報をセット
         setUserDetail(userDetail);
-        setAvatarUrl(avatarUrl);
+        setAvatarUrl(userDetail?.profiles.avatar_url);
 
         // セレクトボックスの選択肢をセット
         setGenres(createListCollection({ items: genres.map((genre) => ({ label: genre.name, value: genre.genre_id })) }));
