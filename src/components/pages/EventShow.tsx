@@ -129,7 +129,7 @@ export const EventShow: React.FC = memo(() => {
                           {event?.profiles?.map((profile) => (
                             <Link onClick={() => onClickShowProfile(profile.profile_id)} key={profile.profile_id}>
                               <Tooltip content={profile.user_name} ids={{ trigger: profile.profile_id }} openDelay={0} showArrow>
-                                <Avatar.Root size="sm" ids={{ root: profile.profile_id }}>
+                                <Avatar.Root size="xs" ids={{ root: profile.profile_id }}>
                                   {profile.avatar_url ? <Avatar.Image src={profile.avatar_url} /> : <Avatar.Image src={defaultAvatar} />}
                                 </Avatar.Root>
                               </Tooltip>
