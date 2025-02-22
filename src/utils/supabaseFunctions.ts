@@ -129,6 +129,24 @@ export const createEvent = async (formData: EventFormData): Promise<void> => {
   }
 };
 
+export const updateEvent = async (formData: EventFormData): Promise<void> => {
+  const { name, detail, max_user_num, genres, play_styles, user_id, event_id } = formData;
+  const { error } = await supabase.rpc('update_event', {
+    p_name: name,
+    p_detail: detail,
+    p_max_user_num: max_user_num,
+    p_genres: genres,
+    p_play_styles: play_styles,
+    p_user_id: user_id,
+    p_event_id: event_id,
+  });
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+};
+
 export const fetchHostedEvents = async (user_id: string): Promise<Event[]> => {
   const { data, error } = await supabase
     .from('events')

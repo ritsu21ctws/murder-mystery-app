@@ -5,6 +5,7 @@ export class EventFormData {
     public max_user_num: string,
     public genres: string[],
     public play_styles: string[],
-    public user_id: string
+    public user_id: string,
+    public event_id?: string
   ) {}
 }
