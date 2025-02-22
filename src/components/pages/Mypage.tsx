@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Center, Container, HStack, Spinner } from '@chakra-ui/react';
 import { UserCard } from '@/components/blocks/UserCard';
-import { fetchUser, getAvatarUrl } from '@/utils/supabaseFunctions';
+import { fetchUser } from '@/utils/supabaseFunctions';
 import { User } from '@/domains/user';
 import { useMessage } from '@/hooks/useMessage';
 
@@ -11,7 +11,6 @@ export const Mypage: React.FC = memo(() => {
   const { showMessage } = useMessage();
 
   const [user, setUser] = useState<User>();
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -25,10 +24,7 @@ export const Mypage: React.FC = memo(() => {
         setLoading(true);
 
         const data = await fetchUser(user_id);
-        const avatarUrl = await getAvatarUrl(data.profiles.avatar_url);
-
         setUser(data);
-        setAvatarUrl(avatarUrl);
       } catch (error) {
         showMessage({ title: 'ユーザー情報の取得に失敗しました', type: 'error' });
       } finally {
@@ -46,9 +42,9 @@ export const Mypage: React.FC = memo(() => {
           <Spinner />
         </Center>
       ) : (
-        <Container mt={{ base: '4', sm: '10' }} textAlign="center">
+        <Container my={{ base: '4', sm: '10' }} textAlign="center">
           <HStack align="start">
-            {user && <UserCard userId={user.user_id} avatarUrl={avatarUrl} userName={user.profiles.user_name} />}
+            {user && <UserCard userId={user.user_id} avatarUrl={user.profiles.avatar_url} userName={user.profiles.user_name} />}
             {/* Todo:おすすめイベント */}
           </HStack>
         </Container>
