@@ -98,120 +98,118 @@ export const EventCreate: React.FC = memo(() => {
           <Spinner />
         </Center>
       ) : (
-        <Container my={{ base: '5', sm: '10' }}>
-          <Center>
-            <Stack gap={{ base: '5', sm: '7' }} width="md">
-              <Heading textAlign="center">イベント作成</Heading>
-              <form onSubmit={onSubmitEventCreate}>
-                <Stack gap="6">
-                  <Field.Root invalid={!!errors.name}>
-                    <Field.Label>イベント名 *</Field.Label>
-                    <Controller
-                      name="name"
-                      control={control}
-                      rules={{
-                        required: 'イベント名の入力は必須です',
-                      }}
-                      render={({ field }) => <Input {...field} bg="white" />}
-                    />
-                    <Field.ErrorText>{errors.name?.message}</Field.ErrorText>
+        <Container my={{ base: '5', sm: '10' }} centerContent>
+          <Stack gap={{ base: '5', sm: '7' }} width="md">
+            <Heading textAlign="center">イベント作成</Heading>
+            <form onSubmit={onSubmitEventCreate}>
+              <Stack gap="6">
+                <Field.Root invalid={!!errors.name}>
+                  <Field.Label>イベント名 *</Field.Label>
+                  <Controller
+                    name="name"
+                    control={control}
+                    rules={{
+                      required: 'イベント名の入力は必須です',
+                    }}
+                    render={({ field }) => <Input {...field} bg="white" />}
+                  />
+                  <Field.ErrorText>{errors.name?.message}</Field.ErrorText>
+                </Field.Root>
+                <Field.Root invalid={!!errors.max_user_num}>
+                  <Field.Label>募集人数 *</Field.Label>
+                  <Controller
+                    name="max_user_num"
+                    control={control}
+                    rules={{
+                      required: '募集人数の入力は必須です',
+                      min: { value: 0, message: '募集人数は0以上である必要があります' },
+                    }}
+                    render={({ field }) => (
+                      <NumberInputRoot
+                        width="100%"
+                        bg="white"
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={({ value }) => field.onChange(value)}
+                      >
+                        <NumberInputField />
+                      </NumberInputRoot>
+                    )}
+                  />
+                  <Field.ErrorText>{errors.max_user_num?.message}</Field.ErrorText>
+                </Field.Root>
+                <Field.Root invalid={!!errors.detail}>
+                  <Field.Label>詳細</Field.Label>
+                  <Controller name="detail" control={control} render={({ field }) => <Textarea {...field} bg="white" />} />
+                  <Field.ErrorText>{errors.detail?.message}</Field.ErrorText>
+                </Field.Root>
+                <Field.Root invalid={!!errors.genres}>
+                  <Field.Label>ジャンル</Field.Label>
+                  <Controller
+                    name="genres"
+                    control={control}
+                    render={({ field }) => (
+                      <SelectRoot
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={({ value }) => field.onChange(value)}
+                        onInteractOutside={() => field.onBlur()}
+                        multiple
+                        collection={genres || createListCollection({ items: [] })}
+                      >
+                        <SelectTrigger bg="white">
+                          <SelectValueText placeholder="Select Option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {genres?.items.map((genre) => (
+                            <SelectItem item={genre} key={genre.value}>
+                              {genre.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </SelectRoot>
+                    )}
+                  />
+                  <Field.ErrorText>{errors.genres?.message}</Field.ErrorText>
+                </Field.Root>
+                <Field.Root invalid={!!errors.play_styles}>
+                  <Field.Label>プレイスタイル</Field.Label>
+                  <Controller
+                    name="play_styles"
+                    control={control}
+                    render={({ field }) => (
+                      <SelectRoot
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={({ value }) => field.onChange(value)}
+                        onInteractOutside={() => field.onBlur()}
+                        multiple
+                        collection={playStyles || createListCollection({ items: [] })}
+                      >
+                        <SelectTrigger bg="white">
+                          <SelectValueText placeholder="Select Option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {playStyles?.items.map((playStyle) => (
+                            <SelectItem item={playStyle} key={playStyle.value}>
+                              {playStyle.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </SelectRoot>
+                    )}
+                  />
+                  <Field.ErrorText>{errors.play_styles?.message}</Field.ErrorText>
+                </Field.Root>
+                <VisuallyHidden asChild>
+                  <Field.Root>
+                    <Controller name="user_id" control={control} render={({ field }) => <Input {...field} />} />
                   </Field.Root>
-                  <Field.Root invalid={!!errors.max_user_num}>
-                    <Field.Label>募集人数 *</Field.Label>
-                    <Controller
-                      name="max_user_num"
-                      control={control}
-                      rules={{
-                        required: '募集人数の入力は必須です',
-                        min: { value: 0, message: '募集人数は0以上である必要があります' },
-                      }}
-                      render={({ field }) => (
-                        <NumberInputRoot
-                          width="100%"
-                          bg="white"
-                          name={field.name}
-                          value={field.value}
-                          onValueChange={({ value }) => field.onChange(value)}
-                        >
-                          <NumberInputField />
-                        </NumberInputRoot>
-                      )}
-                    />
-                    <Field.ErrorText>{errors.max_user_num?.message}</Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root invalid={!!errors.detail}>
-                    <Field.Label>詳細</Field.Label>
-                    <Controller name="detail" control={control} render={({ field }) => <Textarea {...field} bg="white" />} />
-                    <Field.ErrorText>{errors.detail?.message}</Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root invalid={!!errors.genres}>
-                    <Field.Label>ジャンル</Field.Label>
-                    <Controller
-                      name="genres"
-                      control={control}
-                      render={({ field }) => (
-                        <SelectRoot
-                          name={field.name}
-                          value={field.value}
-                          onValueChange={({ value }) => field.onChange(value)}
-                          onInteractOutside={() => field.onBlur()}
-                          multiple
-                          collection={genres || createListCollection({ items: [] })}
-                        >
-                          <SelectTrigger bg="white">
-                            <SelectValueText placeholder="Select Option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {genres?.items.map((genre) => (
-                              <SelectItem item={genre} key={genre.value}>
-                                {genre.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </SelectRoot>
-                      )}
-                    />
-                    <Field.ErrorText>{errors.genres?.message}</Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root invalid={!!errors.play_styles}>
-                    <Field.Label>プレイスタイル</Field.Label>
-                    <Controller
-                      name="play_styles"
-                      control={control}
-                      render={({ field }) => (
-                        <SelectRoot
-                          name={field.name}
-                          value={field.value}
-                          onValueChange={({ value }) => field.onChange(value)}
-                          onInteractOutside={() => field.onBlur()}
-                          multiple
-                          collection={playStyles || createListCollection({ items: [] })}
-                        >
-                          <SelectTrigger bg="white">
-                            <SelectValueText placeholder="Select Option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {playStyles?.items.map((playStyle) => (
-                              <SelectItem item={playStyle} key={playStyle.value}>
-                                {playStyle.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </SelectRoot>
-                      )}
-                    />
-                    <Field.ErrorText>{errors.play_styles?.message}</Field.ErrorText>
-                  </Field.Root>
-                  <VisuallyHidden asChild>
-                    <Field.Root>
-                      <Controller name="user_id" control={control} render={({ field }) => <Input {...field} />} />
-                    </Field.Root>
-                  </VisuallyHidden>
-                  <SecondaryButton loading={loadingCreate}>作成する</SecondaryButton>
-                </Stack>
-              </form>
-            </Stack>
-          </Center>
+                </VisuallyHidden>
+                <SecondaryButton loading={loadingCreate}>作成する</SecondaryButton>
+              </Stack>
+            </form>
+          </Stack>
         </Container>
       )}
     </>
