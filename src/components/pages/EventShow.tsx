@@ -1,19 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Avatar, Button, Card, Center, Container, DataList, Heading, HStack, Link, Spinner, Stack, Tag, Text } from '@chakra-ui/react';
-import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogRoot,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Avatar, Card, Center, Container, DataList, Heading, HStack, Link, Spinner, Stack, Tag, Text } from '@chakra-ui/react';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { SecondaryButton } from '@/components/atoms/SecondaryButton';
+import { DeleteDialog } from '@/components/blocks/DeleteDialog';
 import { EventDetail } from '@/domains/eventDetail';
 import { fetchEventDetail, deleteEvent } from '@/utils/supabaseFunctions';
 import { useMessage } from '@/hooks/useMessage';
@@ -175,35 +166,7 @@ export const EventShow: React.FC = memo(() => {
               </Card.Footer>
             </Card.Root>
           </Container>
-
-          <DialogRoot
-            role="alertdialog"
-            lazyMount
-            open={openConfirm}
-            onOpenChange={(e) => setOpenConfirm(e.open)}
-            motionPreset="slide-in-bottom"
-            trapFocus={false}
-          >
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>削除の確認</DialogTitle>
-              </DialogHeader>
-              <DialogBody>
-                <p>削除したデータは戻せません。削除してもよろしいですか？</p>
-              </DialogBody>
-              <DialogFooter mb="2">
-                <DialogActionTrigger asChild>
-                  <Button variant="outline" aria-label="Cancel delete">
-                    キャンセル
-                  </Button>
-                </DialogActionTrigger>
-                <SecondaryButton loading={loadingDelete} onClick={onClickDelete}>
-                  削除
-                </SecondaryButton>
-              </DialogFooter>
-              <DialogCloseTrigger />
-            </DialogContent>
-          </DialogRoot>
+          <DeleteDialog openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} loadingDelete={loadingDelete} onClickDelete={onClickDelete} />
         </>
       )}
     </>
