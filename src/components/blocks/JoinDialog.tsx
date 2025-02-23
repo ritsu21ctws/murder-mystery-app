@@ -10,17 +10,18 @@ import {
   DialogRoot,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { SecondaryButton } from '@/components/atoms/SecondaryButton';
+import { ActionButton } from '@/components/atoms/ActionButton';
 
 type Props = {
   openConfirm: boolean;
   setOpenConfirm: (open: boolean) => void;
   loading: boolean;
   onClick: () => void;
+  eventName: string | undefined;
 };
 
-export const DeleteDialog: React.FC<Props> = memo((props) => {
-  const { openConfirm, setOpenConfirm, loading, onClick } = props;
+export const JoinDialog: React.FC<Props> = memo((props) => {
+  const { openConfirm, setOpenConfirm, loading, onClick, eventName } = props;
   return (
     <DialogRoot
       role="alertdialog"
@@ -32,20 +33,20 @@ export const DeleteDialog: React.FC<Props> = memo((props) => {
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>削除の確認</DialogTitle>
+          <DialogTitle>参加の確認</DialogTitle>
         </DialogHeader>
         <DialogBody>
-          <Text>削除したデータは戻せません。削除してもよろしいですか？</Text>
+          <Text>「{eventName}」に参加します。よろしいですか？</Text>
         </DialogBody>
         <DialogFooter mb="2">
           <DialogActionTrigger asChild>
-            <Button variant="outline" aria-label="Cancel delete">
+            <Button variant="outline" aria-label="Cancel join">
               キャンセル
             </Button>
           </DialogActionTrigger>
-          <SecondaryButton loading={loading} onClick={onClick}>
-            削除
-          </SecondaryButton>
+          <ActionButton loading={loading} onClick={onClick}>
+            参加
+          </ActionButton>
         </DialogFooter>
         <DialogCloseTrigger />
       </DialogContent>

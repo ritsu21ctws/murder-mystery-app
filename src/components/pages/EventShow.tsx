@@ -3,10 +3,12 @@ import { useNavigate, useParams } from 'react-router';
 import { Avatar, Card, Center, Container, DataList, Heading, HStack, Link, Spinner, Stack, Tag, Text } from '@chakra-ui/react';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
+import { ActionButton } from '@/components/atoms/ActionButton';
 import { SecondaryButton } from '@/components/atoms/SecondaryButton';
 import { DeleteDialog } from '@/components/blocks/DeleteDialog';
+import { JoinDialog } from '@/components/blocks/JoinDialog';
 import { EventDetail } from '@/domains/eventDetail';
-import { fetchEventDetail, deleteEvent } from '@/utils/supabaseFunctions';
+import { fetchEventDetail, deleteEvent, joinEvent } from '@/utils/supabaseFunctions';
 import { useMessage } from '@/hooks/useMessage';
 import defaultAvatar from '@/assets/defautAvatar.svg';
 
@@ -19,6 +21,8 @@ export const EventShow: React.FC = memo(() => {
   const [event, setEvent] = useState<EventDetail>();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [openJoinConfirm, setOpenJoinConfirm] = useState(false);
+  const [loadingJoin, setLoadingJoin] = useState(false);
 
   useEffect(() => {
     if (!user_id) {
@@ -82,6 +86,39 @@ export const EventShow: React.FC = memo(() => {
     };
 
     deleteEventFromEventId();
+  };
+
+  const onClickJoinConfirm = () => {
+    setOpenJoinConfirm(true);
+  };
+
+  const onClickJoin = () => {
+    if (!user_id) {
+      showMessage({ title: 'ユーザー情報の取得に失敗しました', type: 'error' });
+      setOpenJoinConfirm(false);
+      return;
+    } else if (!event_id) {
+      showMessage({ title: '参加対象のデータが見つかりません', type: 'error' });
+      setOpenJoinConfirm(false);
+      return;
+    }
+
+    const joinEventFromEventId = async () => {
+      try {
+        setLoadingJoin(true);
+        await joinEvent(event_id, user_id);
+
+        showMessage({ title: 'イベントへの参加が完了しました', type: 'success' });
+        navigate(`/${user_id}/events/joined`);
+      } catch {
+        showMessage({ title: 'イベントへの参加に失敗しました', type: 'error' });
+      } finally {
+        setLoadingJoin(false);
+        setOpenJoinConfirm(false);
+      }
+    };
+
+    joinEventFromEventId();
   };
 
   return (
@@ -163,10 +200,23 @@ export const EventShow: React.FC = memo(() => {
                     <SecondaryButton onClick={onClickDeleteConfirm}>削除</SecondaryButton>
                   </>
                 )}
+                {event?.created_by !== user_id &&
+                  user_id &&
+                  !event?.profiles.map((profile) => profile.user_id).includes(user_id) &&
+                  event &&
+                  event.max_user_num > event.profiles.length && <ActionButton onClick={onClickJoinConfirm}>参加する</ActionButton>}
               </Card.Footer>
             </Card.Root>
           </Container>
-          <DeleteDialog openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} loadingDelete={loadingDelete} onClickDelete={onClickDelete} />
+
+          <DeleteDialog openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} loading={loadingDelete} onClick={onClickDelete} />
+          <JoinDialog
+            openConfirm={openJoinConfirm}
+            setOpenConfirm={setOpenJoinConfirm}
+            loading={loadingJoin}
+            onClick={onClickJoin}
+            eventName={event?.name}
+          />
         </>
       )}
     </>

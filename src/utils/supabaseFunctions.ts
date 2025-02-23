@@ -166,7 +166,7 @@ export const fetchEventDetail = async (event_id: string): Promise<EventDetail> =
   const { data, error } = await supabase
     .from('events')
     .select(
-      'event_id, name, max_user_num, detail, created_by, genres(genre_id, name), play_styles(play_style_id, name), profiles(profile_id, user_name, avatar_url)'
+      'event_id, name, max_user_num, detail, created_by, genres(genre_id, name), play_styles(play_style_id, name), profiles(profile_id, user_id, user_name, avatar_url)'
     )
     .eq('event_id', event_id)
     .returns<EventDetail>()
@@ -182,6 +182,16 @@ export const fetchEventDetail = async (event_id: string): Promise<EventDetail> =
 
 export const deleteEvent = async (event_id: string): Promise<void> => {
   const { error } = await supabase.from('events').delete().eq('event_id', event_id);
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+};
+
+export const joinEvent = async (event_id: string, user_id: string): Promise<void> => {
+  console.log(event_id, user_id);
+  const { error } = await supabase.from('event_users').insert({ event_id, user_id });
 
   if (error) {
     console.log(error.message);
