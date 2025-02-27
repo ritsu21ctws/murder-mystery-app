@@ -179,6 +179,23 @@ export const fetchHostedEvents = async (user_id: string): Promise<Event[]> => {
   return data;
 };
 
+export const fetchJoinedEvents = async (user_id: string): Promise<Event[]> => {
+  const { data, error } = await supabase
+    .from('events')
+    .select(
+      'event_id, name, max_user_num, detail, genres(genre_id, name), play_styles(play_style_id, name), profiles(count), event_users!inner(user_id)'
+    )
+    .eq('event_users.user_id', user_id)
+    .returns<Event[]>();
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 export const fetchEventDetail = async (event_id: string): Promise<EventDetail> => {
   const { data, error } = await supabase
     .from('events')
