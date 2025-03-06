@@ -5,6 +5,7 @@ import { Event } from '@/domains/event';
 import { EventDetail } from '@/domains/eventDetail';
 import { Genre } from '@/domains/genre';
 import { PlayStyle } from '@/domains/playStyle';
+import { Profile } from '@/domains/profile';
 import { ProfileFormData } from '@/domains/profileFormData';
 import { RegisterFormData } from '@/domains/registerFormData';
 import { User } from '@/domains/user';
@@ -54,6 +55,22 @@ export const fetchUserDetail = async (user_id: string): Promise<User> => {
     .select('user_id, profiles(profile_id, user_name, avatar_url, introduction), genres(genre_id, name), play_styles(play_style_id, name)')
     .eq('user_id', user_id)
     .returns<User>()
+    .single();
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const fetchProfile = async (profile_id: string) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('profile_id, user_name, avatar_url, introduction, accounts(genres(genre_id, name), play_styles(play_style_id, name))')
+    .eq('profile_id', profile_id)
+    .returns<Profile>()
     .single();
 
   if (error) {
@@ -162,11 +179,28 @@ export const fetchHostedEvents = async (user_id: string): Promise<Event[]> => {
   return data;
 };
 
+export const fetchJoinedEvents = async (user_id: string): Promise<Event[]> => {
+  const { data, error } = await supabase
+    .from('events')
+    .select(
+      'event_id, name, max_user_num, detail, genres(genre_id, name), play_styles(play_style_id, name), profiles(count), event_users!inner(user_id)'
+    )
+    .eq('event_users.user_id', user_id)
+    .returns<Event[]>();
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 export const fetchEventDetail = async (event_id: string): Promise<EventDetail> => {
   const { data, error } = await supabase
     .from('events')
     .select(
-      'event_id, name, max_user_num, detail, created_by, genres(genre_id, name), play_styles(play_style_id, name), profiles(profile_id, user_name, avatar_url)'
+      'event_id, name, max_user_num, detail, created_by, genres(genre_id, name), play_styles(play_style_id, name), profiles(profile_id, user_id, user_name, avatar_url)'
     )
     .eq('event_id', event_id)
     .returns<EventDetail>()
@@ -182,6 +216,16 @@ export const fetchEventDetail = async (event_id: string): Promise<EventDetail> =
 
 export const deleteEvent = async (event_id: string): Promise<void> => {
   const { error } = await supabase.from('events').delete().eq('event_id', event_id);
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+};
+
+export const joinEvent = async (event_id: string, user_id: string): Promise<void> => {
+  console.log(event_id, user_id);
+  const { error } = await supabase.from('event_users').insert({ event_id, user_id });
 
   if (error) {
     console.log(error.message);

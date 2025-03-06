@@ -1,21 +1,14 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Avatar, Button, Card, Center, Container, DataList, Heading, HStack, Link, Spinner, Stack, Tag, Text } from '@chakra-ui/react';
-import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogRoot,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Avatar, Card, Center, Container, DataList, Heading, HStack, Link, Spinner, Stack, Tag, Text } from '@chakra-ui/react';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
+import { ActionButton } from '@/components/atoms/ActionButton';
 import { SecondaryButton } from '@/components/atoms/SecondaryButton';
+import { DeleteDialog } from '@/components/blocks/DeleteDialog';
+import { JoinDialog } from '@/components/blocks/JoinDialog';
 import { EventDetail } from '@/domains/eventDetail';
-import { fetchEventDetail, deleteEvent } from '@/utils/supabaseFunctions';
+import { fetchEventDetail, deleteEvent, joinEvent } from '@/utils/supabaseFunctions';
 import { useMessage } from '@/hooks/useMessage';
 import defaultAvatar from '@/assets/defautAvatar.svg';
 
@@ -28,6 +21,8 @@ export const EventShow: React.FC = memo(() => {
   const [event, setEvent] = useState<EventDetail>();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [openJoinConfirm, setOpenJoinConfirm] = useState(false);
+  const [loadingJoin, setLoadingJoin] = useState(false);
 
   useEffect(() => {
     if (!user_id) {
@@ -93,6 +88,39 @@ export const EventShow: React.FC = memo(() => {
     deleteEventFromEventId();
   };
 
+  const onClickJoinConfirm = () => {
+    setOpenJoinConfirm(true);
+  };
+
+  const onClickJoin = () => {
+    if (!user_id) {
+      showMessage({ title: 'ユーザー情報の取得に失敗しました', type: 'error' });
+      setOpenJoinConfirm(false);
+      return;
+    } else if (!event_id) {
+      showMessage({ title: '参加対象のデータが見つかりません', type: 'error' });
+      setOpenJoinConfirm(false);
+      return;
+    }
+
+    const joinEventFromEventId = async () => {
+      try {
+        setLoadingJoin(true);
+        await joinEvent(event_id, user_id);
+
+        showMessage({ title: 'イベントへの参加が完了しました', type: 'success' });
+        navigate(`/${user_id}/events/joined`);
+      } catch {
+        showMessage({ title: 'イベントへの参加に失敗しました', type: 'error' });
+      } finally {
+        setLoadingJoin(false);
+        setOpenJoinConfirm(false);
+      }
+    };
+
+    joinEventFromEventId();
+  };
+
   return (
     <>
       {loading ? (
@@ -129,7 +157,7 @@ export const EventShow: React.FC = memo(() => {
                           {event?.profiles?.map((profile) => (
                             <Link onClick={() => onClickShowProfile(profile.profile_id)} key={profile.profile_id}>
                               <Tooltip content={profile.user_name} ids={{ trigger: profile.profile_id }} openDelay={0} showArrow>
-                                <Avatar.Root size="sm" ids={{ root: profile.profile_id }}>
+                                <Avatar.Root size="xs" ids={{ root: profile.profile_id }}>
                                   {profile.avatar_url ? <Avatar.Image src={profile.avatar_url} /> : <Avatar.Image src={defaultAvatar} />}
                                 </Avatar.Root>
                               </Tooltip>
@@ -172,38 +200,23 @@ export const EventShow: React.FC = memo(() => {
                     <SecondaryButton onClick={onClickDeleteConfirm}>削除</SecondaryButton>
                   </>
                 )}
+                {event?.created_by !== user_id &&
+                  user_id &&
+                  !event?.profiles.map((profile) => profile.user_id).includes(user_id) &&
+                  event &&
+                  event.max_user_num > event.profiles.length && <ActionButton onClick={onClickJoinConfirm}>参加する</ActionButton>}
               </Card.Footer>
             </Card.Root>
           </Container>
 
-          <DialogRoot
-            role="alertdialog"
-            lazyMount
-            open={openConfirm}
-            onOpenChange={(e) => setOpenConfirm(e.open)}
-            motionPreset="slide-in-bottom"
-            trapFocus={false}
-          >
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>削除の確認</DialogTitle>
-              </DialogHeader>
-              <DialogBody>
-                <p>削除したデータは戻せません。削除してもよろしいですか？</p>
-              </DialogBody>
-              <DialogFooter mb="2">
-                <DialogActionTrigger asChild>
-                  <Button variant="outline" aria-label="Cancel delete">
-                    キャンセル
-                  </Button>
-                </DialogActionTrigger>
-                <SecondaryButton loading={loadingDelete} onClick={onClickDelete}>
-                  削除
-                </SecondaryButton>
-              </DialogFooter>
-              <DialogCloseTrigger />
-            </DialogContent>
-          </DialogRoot>
+          <DeleteDialog openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} loading={loadingDelete} onClick={onClickDelete} />
+          <JoinDialog
+            openConfirm={openJoinConfirm}
+            setOpenConfirm={setOpenJoinConfirm}
+            loading={loadingJoin}
+            onClick={onClickJoin}
+            eventName={event?.name}
+          />
         </>
       )}
     </>
