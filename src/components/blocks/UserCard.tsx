@@ -7,7 +7,7 @@ import defaultAvatar from '@/assets/defautAvatar.svg';
 type Props = {
   userId: string;
   avatarUrl: string | undefined;
-  userName: string;
+  userName: string | undefined;
 };
 
 export const UserCard: React.FC<Props> = memo((props) => {

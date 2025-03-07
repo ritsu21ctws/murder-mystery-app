@@ -196,6 +196,19 @@ export const fetchJoinedEvents = async (user_id: string): Promise<Event[]> => {
   return data;
 };
 
+export const fetchRecommendedEvents = async (user_id: string): Promise<Event[]> => {
+  const { data, error } = await supabase.rpc('get_recommended_events', {
+    p_user_id: user_id,
+  });
+
+  if (error) {
+    console.log(error.message);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 export const fetchEventDetail = async (event_id: string): Promise<EventDetail> => {
   const { data, error } = await supabase
     .from('events')
