@@ -55,6 +55,11 @@ export const ProfileEdit: React.FC = memo(() => {
         const genres = await fetchGenres();
         const playStyles = await fetchPlayStyles();
 
+        if (!userDetail?.profiles) {
+          showMessage({ title: 'プロフィール情報の取得に失敗しました', type: 'error' });
+          return;
+        }
+
         // ユーザー情報をセット
         setUserDetail(userDetail);
         setAvatarUrl(userDetail?.profiles.avatar_url);
@@ -106,6 +111,11 @@ export const ProfileEdit: React.FC = memo(() => {
     const updateProfileFromFormData = async () => {
       try {
         setLoadingUpload(true);
+
+        if (!userDetail?.profiles) {
+          showMessage({ title: 'プロフィール情報の取得に失敗しました', type: 'error' });
+          return;
+        }
 
         data.avatar_url = userDetail?.profiles.avatar_url;
         if (newAvatar) {
